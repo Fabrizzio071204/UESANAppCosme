@@ -1,29 +1,22 @@
 package com.example.uesanapp.presentation.home
 
-import android.R
-import android.widget.Space
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.uesanapp.data.model.CountryModel
 
 val mockCountries = listOf(
@@ -38,42 +31,60 @@ val mockCountries = listOf(
 )
 
 @Composable
-fun HomeScreen(){
+fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
+    val favorites by viewModel.favorites.collectAsState()
+    val favoriteNames = favorites.map { it.name }.toSet()
+
     Column(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize()
-            .statusBarsPadding(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Ranking FIFA 2026")
+        Text(
+            "Ranking FIFA 2026",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn {
-            items(mockCountries){ country ->
+            items(mockCountries) { country ->
                 Card(
                     modifier = Modifier
-                                .fillMaxSize()
-                                .padding(vertical = 16.dp)
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
                 ) {
-                    Row(modifier = Modifier.padding(12.dp)) {
-                        Image(
+                    Row(
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AsyncImage(
+                            model = country.imageUrl,
                             contentDescription = country.name,
                             modifier = Modifier.size(64.dp),
-                            contentScale = ContentScale.Crop,
-                            painter = rememberAsyncImagePainter(country.imageUrl)
+                            contentScale = ContentScale.Crop
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Column {
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(country.name, style = MaterialTheme.typography.titleMedium)
-                            Text("Ranking FIFA 2026: ${country.ranking}" )
+                            Text("Ranking FIFA 2026: ${country.ranking}")
+                        }
+                        IconButton(onClick = { viewModel.toggleFavorite(country) }) {
+                            Icon(
+                                imageVector = if (country.name in favoriteNames)
+                                    Icons.Filled.Favorite
+                                else
+                                    Icons.Outlined.FavoriteBorder,
+                                contentDescription = "Favorito",
+                                tint = if (country.name in favoriteNames) Color.Red
+                                else MaterialTheme.colorScheme.onSurface
+                            )
                         }
                     }
-
                 }
             }
         }
-
     }
 }

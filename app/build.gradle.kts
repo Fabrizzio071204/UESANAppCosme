@@ -18,8 +18,12 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf("room.schemaLocation" to "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -59,15 +63,22 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    //Navigation Compose
+    // Navigation
     implementation("androidx.navigation:navigation-compose:2.9.8")
-    //Coil compose
+    // Coil
     implementation("io.coil-kt:coil-compose:2.7.0")
-
-    implementation("androidx.compose.material:material-icons-core:1.7.8") // or latest version
-    //Firebase BoM
+    // Material Icons
+    implementation("androidx.compose.material:material-icons-core:1.7.8")
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    // Firebase
     implementation(platform("com.google.firebase:firebase-bom:34.14.0"))
-
     implementation("com.google.firebase:firebase-analytics")
 
+    // Room
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 }
