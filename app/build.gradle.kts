@@ -2,15 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.example.uesanapp"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.uesanapp"
@@ -18,12 +15,8 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+        multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += mapOf("room.schemaLocation" to "$projectDir/schemas")
-            }
-        }
     }
 
     buildTypes {
@@ -75,9 +68,9 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
 
     // Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,8 +24,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.uesanapp.data.remote.FirebaseAuthManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -35,6 +34,7 @@ fun RegisterScreen(navController: NavController){
     var confirmPassword by remember {mutableStateOf("")}
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -83,7 +83,7 @@ fun RegisterScreen(navController: NavController){
                     && password.isNotBlank()
                     && password == confirmPassword)
                 {
-                    CoroutineScope(Dispatchers.Main).launch {
+                    scope.launch {
                         val result = FirebaseAuthManager.registerUser(name, email, password)
                         if(result.isSuccess){
                             navController.navigate("login")

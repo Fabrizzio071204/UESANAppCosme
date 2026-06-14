@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,8 +26,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.uesanapp.data.remote.FirebaseAuthManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -35,6 +34,7 @@ fun LoginScreen(navController: NavController){
     var password by remember {mutableStateOf("")}
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -69,7 +69,7 @@ fun LoginScreen(navController: NavController){
         Button(
             onClick = {
                 if(email.isNotBlank() && password.isNotBlank()){
-                    CoroutineScope(Dispatchers.Main).launch {
+                    scope.launch {
                         val result = FirebaseAuthManager.loginUser(email, password)
                         if(result.isSuccess){
                             navController.navigate("home")
